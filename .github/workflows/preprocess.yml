@@ -18,7 +18,7 @@ jobs:
     name: Preprocess Diabetes Data
 
     steps:
-    # 1️⃣ Checkout repo
+    # 1️⃣ Checkout repository
     - name: Checkout repository
       uses: actions/checkout@v4
 
@@ -34,24 +34,24 @@ jobs:
         python -m pip install --upgrade pip
         pip install pandas numpy scikit-learn joblib
 
-    # 4️⃣ Run preprocessing script
+    # 4️⃣ Run preprocessing script (FIX PATH)
     - name: Run automated preprocessing
       run: |
-        python Eksperimen_SML_IdaBagusAgungBrahmanandaPutra/preprocessing/automate_IdaBagusAgungBrahmanandaPutra.py --output Eksperimen_SML_IdaBagusAgungBrahmanandaPutra/preprocessing/diabetes_preprocessed_github
+        python preprocessing/automate_IdaBagusAgungBrahmanandaPutra.py --output preprocessing/diabetes_preprocessed_github
 
     # 5️⃣ Verify output
     - name: Verify preprocessing output
       run: |
         echo "Checking generated files:"
-        ls -la Eksperimen_SML_IdaBagusAgungBrahmanandaPutra/preprocessing/diabetes_preprocessed_github
+        ls -la preprocessing/diabetes_preprocessed_github
         echo ""
         echo "Preview summary.txt:"
-        head -5 Eksperimen_SML_IdaBagusAgungBrahmanandaPutra/preprocessing/diabetes_preprocessed_github/summary.txt
+        head -5 preprocessing/diabetes_preprocessed_github/summary.txt
 
     # 6️⃣ Upload artifact
     - name: Upload preprocessed data as artifact
       uses: actions/upload-artifact@v4
       with:
         name: diabetes-preprocessed-data
-        path: Eksperimen_SML_IdaBagusAgungBrahmanandaPutra/preprocessing/diabetes_preprocessed_github
+        path: preprocessing/diabetes_preprocessed_github
         retention-days: 7
