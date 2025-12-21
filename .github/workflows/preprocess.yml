@@ -3,75 +3,49 @@ name: Automated Data Preprocessing
 on:
   push:
     branches: [ main ]
-    paths: 
+    paths:
+      - 'Eksperimen_SML_IdaBagusAgungBrahmanandaPutra/**'
       - 'diabetes.csv'
-      - 'preprocessing/**'
   pull_request:
     branches: [ main ]
   schedule:
-    - cron: '0 0 * * 0'  # Run every Sunday at midnight
-  workflow_dispatch:  # Manual trigger
+    - cron: '0 0 * * 0'
+  workflow_dispatch:
 
 jobs:
   preprocess-data:
     runs-on: ubuntu-latest
     name: Preprocess Diabetes Data
-    
+
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
-      
+      uses: actions/checkout@v4
+
     - name: Set up Python 3.12
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.12'
-        
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install pandas numpy scikit-learn joblib
-        
+
     - name: Run automated preprocessing
       run: |
-        cd preprocessing
-        python automate_NamaAnda.py --output ../diabetes_preprocessed_github
-        
+        python Eksperimen_SML_IdaBagusAgungBrahmanandaPutra/preprocessing/automate_IdaBagusAgungBrahmanandaPutra.py
+
     - name: Verify preprocessing output
       run: |
         echo "Checking generated files:"
-        ls -la diabetes_preprocessed_github/
+        ls -la Eksperimen_SML_IdaBagusAgungBrahmanandaPutra/preprocessing/diabetes_preprocessed
         echo ""
-        echo "File contents:"
-        head -5 diabetes_preprocessed_github/summary.txt
-        
-    - name: Create Preprocessing Report
-      run: |
-        echo "## Preprocessing Results" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "Data preprocessing completed successfully!" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "**Generated Files:**" >> $GITHUB_STEP_SUMMARY
-        echo "- X_train.csv" >> $GITHUB_STEP_SUMMARY
-        echo "- X_test.csv" >> $GITHUB_STEP_SUMMARY
-        echo "- y_train.csv" >> $GITHUB_STEP_SUMMARY
-        echo "- y_test.csv" >> $GITHUB_STEP_SUMMARY
-        echo "- scaler.pkl" >> $GITHUB_STEP_SUMMARY
-        echo "- preprocessing_metadata.json" >> $GITHUB_STEP_SUMMARY
-        echo "- summary.txt" >> $GITHUB_STEP_SUMMARY
-        
+        echo "Preview summary:"
+        head -5 Eksperimen_SML_IdaBagusAgungBrahmanandaPutra/preprocessing/diabetes_preprocessed/summary.txt
+
     - name: Upload preprocessed data as artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: diabetes-preprocessed-data
-        path: |
-          diabetes_preprocessed_github/
+        path: Eksperimen_SML_IdaBagusAgungBrahmanandaPutra/preprocessing/diabetes_preprocessed
         retention-days: 7
-        
-    - name: Commit and push preprocessed data (Optional)
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-      run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git add diabetes_preprocessed_github/
-        git commit -m "chore: Update preprocessed data via GitHub Actions" || echo "No changes to commit"
-        git push origin main || echo "Nothing to push"
