@@ -105,6 +105,10 @@ def preprocess_diabetes(
     X = df_clean.drop('Outcome', axis=1)
     y = df_clean['Outcome']
 
+    # Class distribution
+    class_counts = y.value_counts()
+    print(f"   Class distribution: 0={class_counts.get(0,0)}, 1={class_counts.get(1,0)}")
+
     # 6. FEATURE SCALING
     print("\n6. FEATURE SCALING (StandardScaler)")
     scaler = StandardScaler()
@@ -125,13 +129,16 @@ def preprocess_diabetes(
     print("\n8. SAVING PROCESSED DATA")
     os.makedirs(output_dir, exist_ok=True)
 
+    # Save CSV
     X_train.to_csv(os.path.join(output_dir, "X_train.csv"), index=False)
     X_test.to_csv(os.path.join(output_dir, "X_test.csv"), index=False)
     y_train.to_csv(os.path.join(output_dir, "y_train.csv"), index=False)
     y_test.to_csv(os.path.join(output_dir, "y_test.csv"), index=False)
 
+    # Save scaler
     joblib.dump(scaler, os.path.join(output_dir, "scaler.pkl"))
 
+    # Save metadata
     metadata = {
         "timestamp": datetime.now().isoformat(),
         "input_file": input_path,
@@ -140,11 +147,41 @@ def preprocess_diabetes(
         "rows_cleaned": int(df_clean.shape[0]),
         "test_size": test_size,
         "random_state": random_state,
-        "zero_handling": zero_stats
+        "zero_handling": zero_stats,
+        "duplicates_removed": int(duplicates),
+        "class_distribution": {
+            "0": int(class_counts.get(0,0)),
+            "1": int(class_counts.get(1,0))
+        }
     }
 
     with open(os.path.join(output_dir, "preprocessing_metadata.json"), "w") as f:
         json.dump(metadata, f, indent=2)
+
+    # Save human-readable summary
+    summary_path = os.path.join(output_dir, "summary.txt")
+    with open(summary_path, "w") as f:
+        f.write("Diabetes Data Preprocessing Summary\n")
+        f.write("="*40 + "\n")
+        f.write(f"Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+        f.write(f"Execution time: {(datetime.now() - start_time).total_seconds():.2f} seconds\n\n")
+
+        f.write("Data Statistics:\n")
+        f.write(f"- Original rows: {df.shape[0]}\n")
+        f.write(f"- Cleaned rows: {df_clean.shape[0]}\n")
+        f.write(f"- Training set: {X_train.shape[0]} rows\n")
+        f.write(f"- Test set: {X_test.shape[0]} rows\n\n")
+
+        f.write("Class Distribution:\n")
+        f.write(f"- 0: {class_counts.get(0,0)}\n")
+        f.write(f"- 1: {class_counts.get(1,0)}\n\n")
+
+        f.write("Zero Value Handling:\n")
+        for col, stats in zero_stats.items():
+            f.write(f"- {col}: Replaced {stats['zeros_before']} zeros with median {stats['median_value']:.2f}\n")
+
+        if duplicates > 0:
+            f.write(f"\nDuplicates Removed: {duplicates}\n")
 
     print("\n" + "=" * 70)
     print("PREPROCESSING COMPLETE! 🎉")
@@ -153,7 +190,6 @@ def preprocess_diabetes(
     print(f"Execution time: {(datetime.now() - start_time).total_seconds():.2f} seconds")
 
     return X_train, X_test, y_train, y_test, scaler
-
 
 # =========================================================
 # MAIN
@@ -196,7 +232,6 @@ def main():
     if result is None:
         print("\nPreprocessing failed!")
         exit(1)
-
 
 if __name__ == "__main__":
     main()
