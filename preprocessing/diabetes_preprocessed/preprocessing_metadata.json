@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-12-21T15:16:53.679159",
+  "timestamp": "2025-12-21T15:52:33.125538",
   "input_file": "c:\\Users\\User\\OneDrive\\Dokumen\\SMSML_Submission\\Eksperimen_SML_IdaBagusAgungBrahmanandaPutra\\diabetes.csv",
   "output_directory": "c:\\Users\\User\\OneDrive\\Dokumen\\SMSML_Submission\\Eksperimen_SML_IdaBagusAgungBrahmanandaPutra\\preprocessing\\diabetes_preprocessed",
   "rows_original": 768,
@@ -27,5 +27,10 @@
       "zeros_before": 11,
       "median_value": 32.3
     }
+  },
+  "duplicates_removed": 0,
+  "class_distribution": {
+    "0": 500,
+    "1": 268
   }
 }
