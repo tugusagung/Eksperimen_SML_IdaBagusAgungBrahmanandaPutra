@@ -1,8 +1,3 @@
-"""
-automate_IdaBagusAgungBrahmanandaPutra.py
-Script untuk preprocessing otomatis data diabetes
-"""
-
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler
@@ -13,18 +8,14 @@ import argparse
 import json
 from datetime import datetime
 
-# =========================================================
 # PATH CONFIGURATION
-# =========================================================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_DIR = os.path.abspath(os.path.join(BASE_DIR, ".."))
 
 DEFAULT_INPUT_PATH = os.path.join(PROJECT_DIR, "diabetes.csv")
 DEFAULT_OUTPUT_DIR = os.path.join(BASE_DIR, "diabetes_preprocessed")
 
-# =========================================================
 # PREPROCESSING FUNCTION
-# =========================================================
 def preprocess_diabetes(
     input_path=DEFAULT_INPUT_PATH,
     output_dir=DEFAULT_OUTPUT_DIR,
@@ -39,7 +30,7 @@ def preprocess_diabetes(
     start_time = datetime.now()
 
     # 1. LOAD DATA
-    print("\n📥 1. LOADING DATA")
+    print("\n1. LOADING DATA")
     print(f"Input path: {input_path}")
 
     if not os.path.exists(input_path):
@@ -191,9 +182,8 @@ def preprocess_diabetes(
 
     return X_train, X_test, y_train, y_test, scaler
 
-# =========================================================
+
 # MAIN
-# =========================================================
 def main():
     parser = argparse.ArgumentParser(
         description="Automated Diabetes Data Preprocessing"
